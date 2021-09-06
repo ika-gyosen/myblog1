@@ -18,7 +18,7 @@ export default ({ data }) => {
             birthTime,
             childMarkdownRemark: {
               id,
-              frontmatter: { title, description, slag, tags },
+              frontmatter: { title, description, slug, tags },
             },
           } = post
 
@@ -29,9 +29,9 @@ export default ({ data }) => {
                 <TagList tags={tags} />
               </div>
               <div css={blogLinkStyle}>
-                <Link to={`./${id}/`}>
-                  <h2>{title}</h2>
-                </Link>
+                <h2>
+                  <Link to={`./${slug}/`}>{title}</Link>
+                </h2>
               </div>
             </li>
           )
@@ -54,6 +54,7 @@ const blogListWrapper = css`
 const blogInfoWrapper = css`
   display: flex;
   flex-direction: row;
+  align-items: center;
 `
 
 const blogDateStyle = css`

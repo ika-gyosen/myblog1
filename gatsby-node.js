@@ -12,16 +12,21 @@ exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions
   return new Promise((resolve, reject) => {
     graphql(`
-      query {
-        allMarkdownRemark {
+      query blogQuery {
+        allFile(sort: { fields: birthtime, order: DESC }) {
           nodes {
-            html
-            id
-            frontmatter {
-              date
-              description
-              modifieddate
-              title
+            changeTime
+            birthTime
+            sourceInstanceName
+            childMarkdownRemark {
+              id
+              frontmatter {
+                title
+                description
+                slug
+                tags
+              }
+              html
             }
           }
         }
@@ -35,36 +40,56 @@ exports.createPages = ({ graphql, actions }) => {
       }
       console.log("--- CreatePage Start --------------------", JSON.stringify(result, null, 4))
       let counter = 0
-      result.data.allMarkdownRemark.nodes.forEach(item => {
-        const md_body = item.html
-        const pathresolve = path.resolve("./src/templates/blogpost.js")
-        console.log(`==== `, item.frontmatter.title, ` ====`)
-        // const prev =
-        //   typeof result.data.allContentfulBlogPost.edges[counter - 1] ===
-        //   "undefined"
-        //     ? 0
-        //     : result.data.allContentfulBlogPost.edges[counter - 1].node.slug;
-
-        // const next =
-        //   typeof result.data.allContentfulBlogPost.edges[counter + 1] ===
-        //   "undefined"
-        //     ? 0
-        //     : result.data.allContentfulBlogPost.edges[counter + 1].node.slug;
-        // console.log(node.title, md_body, node.updatedAt, prev, prev);
-        // console.log(`slug`, `/blogpost/${node.slug}`);
+      const dupicateCheckList = new Set()
+      result.data.allFile.nodes.forEach(item => {
         try {
-          createPage({
-            path: `/blog/${item.id}`,
-            component: pathresolve,
-            context: {
-              title: item.frontmatter.title,
-              md_body: md_body,
-              slug: item.id,
-              date: item.frontmatter.date,
-              //   prev: prev,
-              //   next: next,
-            },
-          })
+          const { changeTime, birthTime, sourceInstanceName, childMarkdownRemark } = item
+          if (childMarkdownRemark) {
+            const {
+              id,
+              html,
+              frontmatter: { title, description, slug, tags },
+            } = childMarkdownRemark
+
+            const pathresolve = path.resolve("./src/templates/blogpost.js")
+            console.log(`=====documentType:${sourceInstanceName} id:${id} title:${title} slug:${slug} =====`)
+            // 必須項目の存在チェック
+            if (!title || !slug || !html) throw new Error(`Markdown file not comlited status`)
+            // slugの重複チェック
+            if (dupicateCheckList.has(sourceInstanceName + slug)) {
+              console.error(`Markdown slug duplicate ->${sourceInstanceName + slug}`)
+              throw new Error(`Markdown slug duplicate`)
+            } else {
+              dupicateCheckList.add(sourceInstanceName + slug)
+            }
+            createPage({
+              path: `/${sourceInstanceName}/${slug}`,
+              component: pathresolve,
+              context: {
+                title: title,
+                md_body: html,
+                slug: slug,
+                date: birthTime,
+                mod_date: changeTime,
+                tags: tags,
+                //   prev: prev,
+                //   next: next,
+              },
+            })
+          }
+          // const prev =
+          //   typeof result.data.allContentfulBlogPost.edges[counter - 1] ===
+          //   "undefined"
+          //     ? 0
+          //     : result.data.allContentfulBlogPost.edges[counter - 1].node.slug;
+
+          // const next =
+          //   typeof result.data.allContentfulBlogPost.edges[counter + 1] ===
+          //   "undefined"
+          //     ? 0
+          //     : result.data.allContentfulBlogPost.edges[counter + 1].node.slug;
+          // console.log(node.title, md_body, node.updatedAt, prev, prev);
+          // console.log(`slug`, `/blogpost/${node.slug}`);
         } catch (e) {
           console.error(e)
           throw new Error("blog post gen Error")
@@ -78,23 +103,23 @@ exports.createPages = ({ graphql, actions }) => {
   })
 }
 
-const blogQuery = graphql`
-  query blogQuery {
-    allFile(filter: { sourceInstanceName: { eq: "blog" } }, sort: { fields: birthtime, order: DESC }) {
-      nodes {
-        changeTime
-        birthTime
-        childMarkdownRemark {
-          id
-          frontmatter {
-            title
-            description
-            slug
-            tags
-          }
-          html
-        }
-      }
-    }
-  }
-`
+// const blogQuery = graphql`
+//   query blogQuery {
+//     allFile(filter: { sourceInstanceName: { eq: "blog" } }, sort: { fields: birthtime, order: DESC }) {
+//       nodes {
+//         changeTime
+//         birthTime
+//         childMarkdownRemark {
+//           id
+//           frontmatter {
+//             title
+//             description
+//             slug
+//             tags
+//           }
+//           html
+//         }
+//       }
+//     }
+//   }
+// `

@@ -1,7 +1,5 @@
 import React from "react"
 import { css } from "@emotion/react"
-// import { Link } from "gatsby"
-// import { format } from "date-fns"
 
 const TagList = ({ tags }) => {
   //   console.log("TagList", tag)
@@ -27,19 +25,19 @@ const tagWrapper = css`
 `
 
 const firstTagStyle = css`
-  border-radius: 8px; 
-  margin : 3px; 0 0 3px;
+  border-radius: 8px;
+  margin: 3px 0 0 3px;
   padding: 2px 4px 2px 4px;
-  background-color:black;
+  background-color: black;
   color: white;
 `
 //// background-color: #e3655f;
 const tagStyle = css`
-border-radius: 8px; 
-margin : 3px; 0 0 3px;
-padding: 2px 4px 2px 4px;
-background-color: darkgray;
-color: white;
+  border-radius: 8px;
+  margin: 3px 0 0 3px;
+  padding: 2px 4px 2px 4px;
+  background-color: darkgray;
+  color: white;
 `
 // background-color: #1c9aa0;
 

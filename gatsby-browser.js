@@ -7,4 +7,4 @@
 // You can delete this file if you're not using it
 
 // Highlighting for code blocks
-import "prismjs/themes/prism.css"
+import "/src/css/prism-vsc-dark-plus.css"

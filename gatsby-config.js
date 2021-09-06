@@ -71,7 +71,15 @@ module.exports = {
               className: "your-custom-class-name",
             },
           },
-          "gatsby-remark-code-buttons",
+          {
+            resolve: "gatsby-remark-code-buttons",
+            options: {
+              buttonText: "copy",
+              svgIconClass: "",
+
+              svgIcon: "",
+            },
+          },
           {
             // prism setting
             resolve: `gatsby-remark-prismjs`,

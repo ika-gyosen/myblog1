@@ -2,7 +2,7 @@
 title: Gatsby構築1
 description: このサイトをとりあえず構築して公開するまで
 slug: gatsby-build-1
-tags: Gatsby emotion
+tags: Gatsby,emotion
 ---
 
 # 資料
@@ -20,6 +20,14 @@ eeeee
 #include <stdio.h>
 
 int main(void) {
+    printf("Hello World!");
+}
+```
+
+```c:title=main.c
+#include <stdio.h>
+
+int main2(void) {
     printf("Hello World!");
 }
 ```
